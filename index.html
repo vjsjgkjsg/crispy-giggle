@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
-  <title>🏆 Твой Фитнес-Хаб · Привычки + Статистика</title>
+  <title>💪 Полгода прогресса · Отжимания & Пресс</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: #0b0b0c;
-      color: #eaeaea;
-      min-height: 100vh;
-      padding: 1.5rem;
+      background: #0c0c0e;
+      color: #f0f0f0;
+      padding: 1.2rem;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
     }
     .container {
       width: 100%;
-      max-width: 700px;
+      max-width: 800px;
       background: rgba(22, 22, 24, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-radius: 2.2rem;
       padding: 1.8rem;
       box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.1);
@@ -31,437 +31,393 @@
     h1 {
       font-weight: 700;
       font-size: 2rem;
-      letter-spacing: -0.6px;
-      background: linear-gradient(135deg, #ff8c52, #ff3e6c, #b266ff);
+      background: linear-gradient(135deg, #ff6b6b, #feca57);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 0.2rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
-    .subtitle { color: #8e8e93; margin-bottom: 1.8rem; font-size: 0.9rem; }
-    .card {
-      background: rgba(44, 44, 48, 0.5);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 1.5rem;
-      padding: 1.4rem;
+    .subtitle {
+      color: #8e8e93;
       margin-bottom: 1.5rem;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .section-title {
-      font-weight: 650;
-      font-size: 1.15rem;
-      margin-bottom: 1rem;
+      font-size: 0.95rem;
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .habit-row, .today-row {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 0.8rem;
       flex-wrap: wrap;
-      background: rgba(255,255,255,0.03);
-      padding: 0.6rem 0.9rem;
-      border-radius: 1rem;
+      gap: 1rem;
     }
-    .habit-row input, .today-row input[type="number"] {
+    .plan-table {
+      overflow-x: auto;
+      border-radius: 1rem;
+      margin: 1.5rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(44, 44, 48, 0.5);
+      backdrop-filter: blur(10px);
+    }
+    th, td {
+      padding: 0.8rem 0.6rem;
+      text-align: center;
+      border-bottom: 1px solid #3a3a3c;
+      font-size: 0.9rem;
+    }
+    th {
+      background: rgba(255,255,255,0.05);
+      font-weight: 600;
+      color: #feca57;
+    }
+    .done-check {
+      width: 1.2rem;
+      height: 1.2rem;
+      accent-color: #4caf50;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    .fact-input {
+      width: 60px;
       background: #2c2c2e;
       border: 1px solid #3a3a3c;
-      color: #fff;
-      padding: 0.7rem 0.9rem;
-      border-radius: 0.8rem;
-      font-size: 0.95rem;
-      width: auto;
-      min-width: 90px;
-    }
-    .habit-row input:focus, .today-row input:focus {
-      border-color: #ff8c52;
-      outline: none;
-    }
-    .btn {
-      border: none;
-      border-radius: 0.8rem;
-      padding: 0.6rem 1.2rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: #ff3e6c;
+      border-radius: 0.5rem;
+      padding: 0.3rem 0.4rem;
       color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-      font-size: 0.9rem;
-      transition: 0.2s;
-      white-space: nowrap;
+      text-align: center;
     }
-    .btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
-    .btn.secondary { background: #3a3a3c; }
-    .btn.small { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
-    .checkbox-big {
-      width: 1.4rem; height: 1.4rem; accent-color: #ff8c52; transform: scale(1.1); margin-right: 0.2rem;
+    .week-row:hover { background: rgba(255,255,255,0.03); }
+    .goal-text { font-weight: 600; color: #ff8c52; }
+    .stats-panel {
+      background: rgba(44, 44, 48, 0.6);
+      border-radius: 1.2rem;
+      padding: 1.2rem;
+      margin-top: 1.5rem;
     }
-    .tag {
-      font-weight: 500;
-      background: #2c2c2e;
-      padding: 0.2rem 0.8rem;
-      border-radius: 1rem;
-      font-size: 0.8rem;
-    }
-    .period-selector {
-      display: flex; gap: 0.4rem; flex-wrap: wrap; margin: 1rem 0;
+    .period-btns {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
     .period-btn {
-      background: #2c2c2e; border: 1px solid #444; padding: 0.45rem 1rem;
-      border-radius: 2rem; font-weight:600; font-size:0.8rem; cursor:pointer; color:#ccc;
+      background: #2c2c2e;
+      border: 1px solid #444;
+      color: #ccc;
+      padding: 0.4rem 1rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
-    .period-btn.active { background: #ff8c52; border-color: #ff8c52; color:#0a0a0a; }
-    .stats-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+    .period-btn.active {
+      background: #feca57;
+      color: #0a0a0a;
+      border-color: #feca57;
+    }
     canvas { margin-top: 1rem; }
-    hr { border-color: #333; margin: 1.3rem 0; }
-    .flex-between { display: flex; justify-content: space-between; align-items: center; }
-    @media (max-width: 480px) {
-      .container { padding: 1.2rem; }
-      .habit-row, .today-row { flex-direction: column; align-items: flex-start; }
+    .btn-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+    .btn {
+      background: #3a3a3c;
+      border: none;
+      border-radius: 0.8rem;
+      padding: 0.5rem 1.1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .btn.primary { background: #ff6b6b; }
+    @media (max-width: 600px) {
+      .container { padding: 1rem; }
+      th, td { padding: 0.5rem 0.3rem; font-size: 0.8rem; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🏋️‍♂️ Фитнес-Хаб</h1>
-    <div class="subtitle">Твои привычки • Дневная доска • Статистика</div>
-
-    <!-- Блок управления данными -->
-    <div class="flex-between" style="margin-bottom:1.2rem;">
-      <button id="exportBtn" class="btn secondary small">📤 Скачать данные</button>
-      <button id="importBtn" class="btn secondary small">📥 Загрузить из файла</button>
-      <input type="file" id="importFile" accept=".json" style="display:none;">
+    <h1>📅 Полгода силы</h1>
+    <div class="subtitle">
+      <span>Старт: 21.06.2026</span>
+      <span>⏳ 26 недель</span>
+      <span>📈 +5 каждую неделю</span>
     </div>
 
-    <!-- Секция Привычки (шаблоны) -->
-    <div class="card">
-      <div class="section-title"><span>⭐</span> Мои привычки</div>
-      <div id="habitsContainer">
-        <!-- динамически -->
-      </div>
-      <div class="habit-row" style="background:transparent; padding-left:0;">
-        <input type="text" id="newHabitName" placeholder="Название (пресс)" style="flex:2;">
-        <input type="number" id="newHabitGoal" placeholder="Цель, раз" min="1" value="50" style="flex:1;">
-        <button id="addHabitBtn" class="btn small">➕ Добавить</button>
-      </div>
-      <div style="font-size:0.75rem; color:#8e8e93; margin-top:0.3rem;">💡 Эти упражнения будут появляться каждый день</div>
+    <div class="btn-row">
+      <button id="exportBtn" class="btn">📤 Скачать</button>
+      <button id="importBtn" class="btn">📥 Загрузить</button>
+      <input type="file" id="importFile" accept=".json" hidden>
+      <button id="resetBtn" class="btn primary">🔄 Сбросить прогресс</button>
     </div>
 
-    <!-- Доска «Сегодня» -->
-    <div class="card">
-      <div class="section-title"><span>📅</span> Сегодня – <span id="todayDate"></span></div>
-      <div id="todayBoard">
-        <!-- генерируется из привычек -->
-      </div>
-      <div style="margin-top:0.8rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-        <button id="addCustomTodayBtn" class="btn secondary small">✏️ Разовое упражнение</button>
-      </div>
-      <div id="todayLog" style="margin-top:1rem;"></div>
+    <div class="plan-table">
+      <table id="planTable">
+        <thead>
+          <tr>
+            <th>Неделя</th>
+            <th>Даты</th>
+            <th>Отжимания<br><small>3×?</small></th>
+            <th>✅</th>
+            <th>Факт</th>
+            <th>Пресс<br><small>3×?</small></th>
+            <th>✅</th>
+            <th>Факт</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
 
-    <!-- Статистика -->
-    <div class="card">
-      <div class="section-title"><span>📊</span> Статистика по периодам</div>
-      <div class="period-selector" id="periodButtons">
-        <button class="period-btn active" data-period="week">Неделя</button>
-        <button class="period-btn" data-period="month">Месяц</button>
-        <button class="period-btn" data-period="quarter">3 мес</button>
-        <button class="period-btn" data-period="halfyear">6 мес</button>
-        <button class="period-btn" data-period="year">Год</button>
+    <div class="stats-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;">📊 Статистика</h3>
+        <div class="period-btns" id="periodButtons">
+          <button class="period-btn active" data-period="week">Неделя</button>
+          <button class="period-btn" data-period="month">Месяц</button>
+          <button class="period-btn" data-period="quarter">3 мес</button>
+          <button class="period-btn" data-period="halfyear">6 мес</button>
+          <button class="period-btn" data-period="year">Год</button>
+        </div>
       </div>
-      <div id="periodStats" class="stats-grid"></div>
+      <div id="statsText" style="margin:0.8rem 0;"></div>
       <canvas id="progressChart" width="400" height="200"></canvas>
     </div>
   </div>
 
   <script>
     (function() {
+      // ---------- Константы программы ----------
+      const START_DATE = '2026-06-21';
+      const TOTAL_WEEKS = 26;
+      const INITIAL_PUSHUP = 15;  // повторений в подходе
+      const INITIAL_PRESS = 30;
+      const SETS = 3;
+      const WEEKLY_INCREMENT = 5;
+
       // ---------- Хранилище ----------
-      const STORAGE_HABITS = 'fitness_habits';
-      const STORAGE_RECORDS = 'fitness_records';
+      const STORAGE_KEY = 'halfyear_plan_data';
+      let planData = {
+        startDate: START_DATE,
+        weeks: [] // { weekIndex, pushupGoal, pressGoal, pushupDone, pressDone, pushupActual, pressActual }
+      };
 
-      let habits = [];            // { id, name, goal }
-      let records = [];          // { id, date, exercise, reps, habitId? }
-
+      // Загрузка / сохранение
       function loadData() {
-        const h = localStorage.getItem(STORAGE_HABITS);
-        habits = h ? JSON.parse(h) : [];
-        const r = localStorage.getItem(STORAGE_RECORDS);
-        records = r ? JSON.parse(r) : [];
-        // сортировка записей по дате (свежие выше)
-        records.sort((a,b) => (b.date||'').localeCompare(a.date||'') || b.id - a.id);
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            planData = parsed;
+            // убедимся, что 26 недель существуют
+            if (!planData.weeks || planData.weeks.length !== TOTAL_WEEKS) {
+              generateDefaultWeeks();
+            }
+          } catch (e) {
+            generateDefaultWeeks();
+          }
+        } else {
+          generateDefaultWeeks();
+        }
       }
 
-      function saveHabits() { localStorage.setItem(STORAGE_HABITS, JSON.stringify(habits)); }
-      function saveRecords() { localStorage.setItem(STORAGE_RECORDS, JSON.stringify(records)); }
-
-      // ---------- Вспомогательные ----------
-      function getTodayISO() { return new Date().toISOString().split('T')[0]; }
-      function formatDateISO(iso) {
-        if (!iso) return '';
-        const [y,m,d] = iso.split('-');
-        return `${d}.${m}.${y}`;
+      function generateDefaultWeeks() {
+        planData.weeks = [];
+        for (let i = 0; i < TOTAL_WEEKS; i++) {
+          planData.weeks.push({
+            weekIndex: i,
+            pushupGoal: (INITIAL_PUSHUP + i * WEEKLY_INCREMENT) * SETS,
+            pressGoal: (INITIAL_PRESS + i * WEEKLY_INCREMENT) * SETS,
+            pushupDone: false,
+            pressDone: false,
+            pushupActual: null,
+            pressActual: null
+          });
+        }
+        planData.startDate = START_DATE;
       }
 
-      // ---------- DOM ----------
-      const habitsContainer = document.getElementById('habitsContainer');
-      const newHabitName = document.getElementById('newHabitName');
-      const newHabitGoal = document.getElementById('newHabitGoal');
-      const addHabitBtn = document.getElementById('addHabitBtn');
-      const todayBoard = document.getElementById('todayBoard');
-      const todayLogDiv = document.getElementById('todayLog');
-      const todayDateSpan = document.getElementById('todayDate');
-      const periodStatsDiv = document.getElementById('periodStats');
-      const periodButtons = document.getElementById('periodButtons');
-      const addCustomTodayBtn = document.getElementById('addCustomTodayBtn');
-      const exportBtn = document.getElementById('exportBtn');
-      const importBtn = document.getElementById('importBtn');
-      const importFile = document.getElementById('importFile');
+      function saveData() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(planData));
+      }
 
+      // ---------- Вспомогательные функции дат ----------
+      function getWeekStartDate(weekIndex) {
+        const start = new Date(START_DATE);
+        start.setDate(start.getDate() + weekIndex * 7);
+        return start;
+      }
+
+      function formatDateRange(weekIndex) {
+        const start = getWeekStartDate(weekIndex);
+        const end = new Date(start);
+        end.setDate(end.getDate() + 6);
+        const fmt = d => d.toISOString().split('T')[0].split('-').reverse().join('.');
+        return `${fmt(start)} – ${fmt(end)}`;
+      }
+
+      // ---------- Отрисовка таблицы ----------
+      const tbody = document.querySelector('#planTable tbody');
+
+      function renderTable() {
+        tbody.innerHTML = '';
+        planData.weeks.forEach((week, idx) => {
+          const row = document.createElement('tr');
+          row.className = 'week-row';
+          const pushupGoal = week.pushupGoal;
+          const pressGoal = week.pressGoal;
+          const pushupPerSet = pushupGoal / SETS;
+          const pressPerSet = pressGoal / SETS;
+
+          row.innerHTML = `
+            <td><strong>${idx + 1}</strong></td>
+            <td>${formatDateRange(idx)}</td>
+            <td><span class="goal-text">3×${pushupPerSet}</span> (${pushupGoal})</td>
+            <td><input type="checkbox" class="done-check pushup-done" data-week="${idx}" ${week.pushupDone ? 'checked' : ''}></td>
+            <td><input type="number" class="fact-input pushup-actual" data-week="${idx}" value="${week.pushupActual ?? ''}" placeholder="${pushupGoal}" min="0"></td>
+            <td><span class="goal-text">3×${pressPerSet}</span> (${pressGoal})</td>
+            <td><input type="checkbox" class="done-check press-done" data-week="${idx}" ${week.pressDone ? 'checked' : ''}></td>
+            <td><input type="number" class="fact-input press-actual" data-week="${idx}" value="${week.pressActual ?? ''}" placeholder="${pressGoal}" min="0"></td>
+          `;
+          tbody.appendChild(row);
+        });
+
+        // Навешиваем события
+        document.querySelectorAll('.pushup-done').forEach(cb => {
+          cb.addEventListener('change', (e) => {
+            const weekIdx = parseInt(e.target.dataset.week);
+            planData.weeks[weekIdx].pushupDone = e.target.checked;
+            saveData();
+            updateStats();
+          });
+        });
+        document.querySelectorAll('.press-done').forEach(cb => {
+          cb.addEventListener('change', (e) => {
+            const weekIdx = parseInt(e.target.dataset.week);
+            planData.weeks[weekIdx].pressDone = e.target.checked;
+            saveData();
+            updateStats();
+          });
+        });
+        document.querySelectorAll('.pushup-actual').forEach(inp => {
+          inp.addEventListener('change', (e) => {
+            const weekIdx = parseInt(e.target.dataset.week);
+            const val = e.target.value === '' ? null : parseInt(e.target.value);
+            planData.weeks[weekIdx].pushupActual = isNaN(val) ? null : val;
+            saveData();
+            updateStats();
+          });
+        });
+        document.querySelectorAll('.press-actual').forEach(inp => {
+          inp.addEventListener('change', (e) => {
+            const weekIdx = parseInt(e.target.dataset.week);
+            const val = e.target.value === '' ? null : parseInt(e.target.value);
+            planData.weeks[weekIdx].pressActual = isNaN(val) ? null : val;
+            saveData();
+            updateStats();
+          });
+        });
+      }
+
+      // ---------- Статистика ----------
       let chart = null;
       let currentPeriod = 'week';
 
-      // ---------- Отрисовка привычек ----------
-      function renderHabits() {
-        if (!habits.length) {
-          habitsContainer.innerHTML = '<div style="color:#8e8e93; padding:0.5rem 0;">Пока нет привычек. Создай первую!</div>';
-          return;
-        }
-        let html = '';
-        habits.forEach(h => {
-          html += `
-            <div class="habit-row">
-              <span style="flex:2; font-weight:500;">${h.name}</span>
-              <span class="tag">🎯 цель: ${h.goal}</span>
-              <button class="btn secondary small" data-delhabit="${h.id}">🗑️</button>
-            </div>
-          `;
-        });
-        habitsContainer.innerHTML = html;
-        document.querySelectorAll('[data-delhabit]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const id = Number(e.currentTarget.getAttribute('data-delhabit'));
-            habits = habits.filter(h => h.id !== id);
-            saveHabits();
-            renderHabits();
-            renderTodayBoard(); // обновить доску, т.к. привычки изменились
-          });
-        });
-      }
-
-      // ---------- Доска Сегодня ----------
-      function getTodayRecords() {
-        const today = getTodayISO();
-        return records.filter(r => r.date === today);
-      }
-
-      function renderTodayBoard() {
-        const today = getTodayISO();
-        todayDateSpan.textContent = formatDateISO(today);
-        const todaysRecords = getTodayRecords();
-
-        // Для каждой привычки создаём строку
-        let html = '';
-        habits.forEach(habit => {
-          // Ищем запись за сегодня по habitId
-          const existing = todaysRecords.find(r => r.habitId === habit.id);
-          const done = !!existing;
-          const repsValue = existing ? existing.reps : '';
-          html += `
-            <div class="today-row" data-habit-id="${habit.id}">
-              <input type="checkbox" class="checkbox-big" ${done ? 'checked' : ''} title="Отметить выполнение">
-              <span style="flex:2; font-weight:500;">${habit.name}</span>
-              <input type="number" class="today-reps" placeholder="${habit.goal} (цель)" value="${repsValue}" min="0" step="1" style="width:90px;">
-              <button class="btn small save-today-btn" style="display:none;">✔️</button>
-              <span class="tag" style="background:#ff8c5240;">цель: ${habit.goal}</span>
-            </div>
-          `;
-        });
-        // Если нет привычек
-        if (!habits.length) {
-          html = '<div style="color:#8e8e93;">Сначала создай привычки (вверху)</div>';
-        }
-        todayBoard.innerHTML = html;
-
-        // Навешиваем обработчики
-        document.querySelectorAll('.today-row').forEach(row => {
-          const habitId = Number(row.getAttribute('data-habit-id'));
-          const checkbox = row.querySelector('.checkbox-big');
-          const repsInput = row.querySelector('.today-reps');
-          const saveBtn = row.querySelector('.save-today-btn');
-
-          // Автосохранение при изменении числа или галочки
-          const saveTodayEntry = () => {
-            const checked = checkbox.checked;
-            let reps = parseInt(repsInput.value, 10);
-            if (!checked) {
-              // если галочка снята – удаляем запись за сегодня по этой привычке
-              records = records.filter(r => !(r.date === getTodayISO() && r.habitId === habitId));
-            } else {
-              if (isNaN(reps) || reps < 0) reps = 0;
-              // ищем запись
-              const existingIdx = records.findIndex(r => r.date === getTodayISO() && r.habitId === habitId);
-              if (existingIdx >= 0) {
-                records[existingIdx].reps = reps;
-              } else {
-                records.push({
-                  id: Date.now(),
-                  date: getTodayISO(),
-                  exercise: habits.find(h => h.id === habitId)?.name || 'привычка',
-                  reps: reps,
-                  habitId: habitId
-                });
-              }
-            }
-            saveRecords();
-            renderTodayLog();
-            updateStatsAndChart();
-          };
-
-          checkbox.addEventListener('change', saveTodayEntry);
-          repsInput.addEventListener('change', saveTodayEntry);
-          repsInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') saveTodayEntry();
-          });
-        });
-
-        renderTodayLog();
-      }
-
-      // Отображение лога сегодняшних записей (всех, включая разовые)
-      function renderTodayLog() {
-        const todays = getTodayRecords();
-        if (todays.length === 0) {
-          todayLogDiv.innerHTML = '<div style="color:#8e8e93;">Нет записей за сегодня</div>';
-          return;
-        }
-        let html = '<div style="font-weight:600; margin-bottom:0.4rem;">✅ Выполнено:</div>';
-        todays.forEach(r => {
-          html += `
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff05; padding:0.4rem 0.8rem; border-radius:0.6rem; margin-bottom:0.3rem;">
-              <span>${r.exercise} – ${r.reps} раз</span>
-              <button class="btn small secondary" data-delrecord="${r.id}">✕</button>
-            </div>
-          `;
-        });
-        todayLogDiv.innerHTML = html;
-        document.querySelectorAll('[data-delrecord]').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const id = Number(e.currentTarget.getAttribute('data-delrecord'));
-            records = records.filter(r => r.id !== id);
-            saveRecords();
-            renderTodayBoard(); // полное обновление доски и лога
-            updateStatsAndChart();
-          });
-        });
-      }
-
-      // Добавить разовое упражнение
-      function addCustomToday() {
-        const name = prompt('Название упражнения:');
-        if (!name) return;
-        const repsStr = prompt('Количество повторений:', '0');
-        const reps = parseInt(repsStr, 10);
-        if (isNaN(reps) || reps < 0) return;
-        records.push({
-          id: Date.now(),
-          date: getTodayISO(),
-          exercise: name.trim(),
-          reps: reps,
-          habitId: null
-        });
-        saveRecords();
-        renderTodayBoard();
-        updateStatsAndChart();
-      }
-
-      // ---------- Статистика и график ----------
-      function getPeriodStart(period, refDate = new Date()) {
-        const d = new Date(refDate);
+      function getPeriodStart(period) {
+        const ref = new Date(); // для реальной статистики используем сегодня, но план до декабря 2026
+        const d = new Date(ref);
         switch(period) {
-          case 'week': d.setDate(d.getDate()-7); break;
-          case 'month': d.setMonth(d.getMonth()-1); break;
-          case 'quarter': d.setMonth(d.getMonth()-3); break;
-          case 'halfyear': d.setMonth(d.getMonth()-6); break;
-          case 'year': d.setFullYear(d.getFullYear()-1); break;
+          case 'week': d.setDate(d.getDate() - 7); break;
+          case 'month': d.setMonth(d.getMonth() - 1); break;
+          case 'quarter': d.setMonth(d.getMonth() - 3); break;
+          case 'halfyear': d.setMonth(d.getMonth() - 6); break;
+          case 'year': d.setFullYear(d.getFullYear() - 1); break;
         }
         return d.toISOString().split('T')[0];
       }
 
-      function updateStatsAndChart() {
-        const start = getPeriodStart(currentPeriod);
-        const end = getTodayISO();
-        const filtered = records.filter(r => r.date >= start && r.date <= end);
+      function updateStats() {
+        const today = new Date().toISOString().split('T')[0];
+        const startPeriod = getPeriodStart(currentPeriod);
         
-        // группировка по упражнениям
-        const aggr = new Map();
-        filtered.forEach(r => {
-          const ex = r.exercise.trim();
-          aggr.set(ex, (aggr.get(ex) || 0) + Number(r.reps));
+        // Фильтруем недели, чей диапазон попадает в период (хотя бы частично)
+        const relevantWeeks = planData.weeks.filter((_, idx) => {
+          const weekStart = getWeekStartDate(idx).toISOString().split('T')[0];
+          const weekEnd = new Date(getWeekStartDate(idx));
+          weekEnd.setDate(weekEnd.getDate() + 6);
+          const weekEndStr = weekEnd.toISOString().split('T')[0];
+          return weekStart <= today && weekEndStr >= startPeriod;
         });
-        const sorted = Array.from(aggr.entries()).sort((a,b) => b[1]-a[1]);
 
-        let statsHtml = '';
-        if (sorted.length === 0) {
-          statsHtml = 'Нет данных за период';
-        } else {
-          sorted.forEach(([ex, total]) => {
-            statsHtml += `<div class="flex-between"><span>🏅 ${ex}</span> <strong>${total}</strong></div>`;
-          });
-          const totalAll = sorted.reduce((sum, [,t]) => sum + t, 0);
-          statsHtml += `<div style="border-top:1px solid #444; margin-top:0.6rem; padding-top:0.5rem;">💪 Всего: ${totalAll} повторений</div>`;
-        }
-        periodStatsDiv.innerHTML = statsHtml;
+        let pushupTotal = 0, pressTotal = 0;
+        let completedWeeks = 0;
+        relevantWeeks.forEach(w => {
+          const pushActual = w.pushupActual !== null ? w.pushupActual : (w.pushupDone ? w.pushupGoal : 0);
+          const pressActual = w.pressActual !== null ? w.pressActual : (w.pressDone ? w.pressGoal : 0);
+          pushupTotal += pushActual;
+          pressTotal += pressActual;
+          if (w.pushupDone || w.pushupActual !== null || w.pressDone || w.pressActual !== null) {
+            completedWeeks++;
+          }
+        });
 
-        // График
+        document.getElementById('statsText').innerHTML = `
+          <div>✅ Активных недель в периоде: ${completedWeeks} / ${relevantWeeks.length}</div>
+          <div>🏋️ Отжимания всего: <strong>${pushupTotal}</strong> повторений</div>
+          <div>🔥 Пресс всего: <strong>${pressTotal}</strong> повторений</div>
+          <div>💪 Общий объём: <strong>${pushupTotal + pressTotal}</strong></div>
+        `;
+
+        // График: суммарные повторения по неделям (факт или цель, если выполнено)
+        const labels = [];
+        const pushupData = [];
+        const pressData = [];
+        relevantWeeks.forEach((w, i) => {
+          labels.push(`Нед. ${w.weekIndex + 1}`);
+          pushupData.push(w.pushupActual !== null ? w.pushupActual : (w.pushupDone ? w.pushupGoal : 0));
+          pressData.push(w.pressActual !== null ? w.pressActual : (w.pressDone ? w.pressGoal : 0));
+        });
+
         const ctx = document.getElementById('progressChart').getContext('2d');
         if (chart) chart.destroy();
-        const labels = sorted.map(([ex]) => ex);
-        const data = sorted.map(([,t]) => t);
         chart = new Chart(ctx, {
           type: 'bar',
           data: {
             labels,
-            datasets: [{
-              label: 'Повторения',
-              data,
-              backgroundColor: ['#ff8c52','#ff3e6c','#b266ff','#48dbfb','#feca57','#ff9ff3'],
-              borderRadius: 8
-            }]
+            datasets: [
+              { label: 'Отжимания', data: pushupData, backgroundColor: '#ff6b6b', borderRadius: 6 },
+              { label: 'Пресс', data: pressData, backgroundColor: '#48dbfb', borderRadius: 6 }
+            ]
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, grid: { color: '#3a3a3c' }, ticks: { color: '#ccc' } },
-                      x: { ticks: { color: '#ccc' } } }
+            plugins: { legend: { position: 'bottom' } },
+            scales: {
+              y: { beginAtZero: true, grid: { color: '#3a3a3c' }, ticks: { color: '#ccc' } },
+              x: { ticks: { color: '#ccc' } }
+            }
           }
         });
       }
 
-      // Переключение периода
-      function setPeriod(period, el) {
+      function setPeriod(period, btn) {
         currentPeriod = period;
         document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-        if (el) el.classList.add('active');
-        updateStatsAndChart();
+        btn.classList.add('active');
+        updateStats();
       }
 
-      // ---------- Экспорт / Импорт ----------
+      // ---------- Экспорт / Импорт / Сброс ----------
       function exportData() {
-        const data = { habits, records };
-        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const blob = new Blob([JSON.stringify(planData, null, 2)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `fitness_backup_${getTodayISO()}.json`;
+        a.download = `fitness_plan_${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
       }
@@ -471,74 +427,54 @@
         reader.onload = (e) => {
           try {
             const data = JSON.parse(e.target.result);
-            if (data.habits && Array.isArray(data.habits)) {
-              habits = data.habits;
-              saveHabits();
+            if (data.weeks && data.startDate) {
+              planData = data;
+              saveData();
+              renderTable();
+              updateStats();
+              alert('План загружен!');
+            } else {
+              alert('Неверный формат файла');
             }
-            if (data.records && Array.isArray(data.records)) {
-              records = data.records;
-              saveRecords();
-            }
-            renderAll();
-            alert('Данные успешно загружены!');
           } catch (err) {
-            alert('Ошибка: неверный формат файла');
+            alert('Ошибка чтения файла');
           }
         };
         reader.readAsText(file);
       }
 
-      function renderAll() {
-        renderHabits();
-        renderTodayBoard();
-        updateStatsAndChart();
+      function resetProgress() {
+        if (confirm('Точно сбросить все отметки и фактические повторения? Цели останутся.')) {
+          planData.weeks.forEach(w => {
+            w.pushupDone = false;
+            w.pressDone = false;
+            w.pushupActual = null;
+            w.pressActual = null;
+          });
+          saveData();
+          renderTable();
+          updateStats();
+        }
       }
 
       // ---------- Инициализация ----------
       function init() {
         loadData();
-        // если привычек нет, создадим демо
-        if (habits.length === 0) {
-          habits = [
-            { id: 161, name: 'Отжимания', goal: 50 },
-            { id: 162, name: 'Пресс', goal: 100 },
-            { id: 163, name: 'Приседания', goal: 60 }
-          ];
-          saveHabits();
-        }
-        renderAll();
+        renderTable();
+        updateStats();
 
-        // События
-        addHabitBtn.addEventListener('click', () => {
-          const name = newHabitName.value.trim();
-          const goal = parseInt(newHabitGoal.value, 10);
-          if (!name || isNaN(goal) || goal <= 0) return alert('Введи название и цель');
-          habits.push({ id: Date.now(), name, goal });
-          saveHabits();
-          newHabitName.value = '';
-          newHabitGoal.value = 50;
-          renderHabits();
-          renderTodayBoard();
+        document.getElementById('exportBtn').addEventListener('click', exportData);
+        document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+        document.getElementById('importFile').addEventListener('change', (e) => {
+          if (e.target.files[0]) importData(e.target.files[0]);
         });
+        document.getElementById('resetBtn').addEventListener('click', resetProgress);
 
-        addCustomTodayBtn.addEventListener('click', addCustomToday);
-
-        periodButtons.addEventListener('click', (e) => {
+        document.getElementById('periodButtons').addEventListener('click', (e) => {
           if (e.target.classList.contains('period-btn')) {
             setPeriod(e.target.dataset.period, e.target);
           }
         });
-
-        exportBtn.addEventListener('click', exportData);
-        importBtn.addEventListener('click', () => importFile.click());
-        importFile.addEventListener('change', (e) => {
-          if (e.target.files[0]) importData(e.target.files[0]);
-        });
-
-        // Установим активный период
-        const activePeriodBtn = document.querySelector('.period-btn.active');
-        if (activePeriodBtn) currentPeriod = activePeriodBtn.dataset.period;
-        updateStatsAndChart();
       }
 
       init();
