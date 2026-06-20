@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Твой Фитнес План</title>
-  <!-- Иконка -->
+  <title>Твой Фитнес План 2026</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50' font-size='50'>💪</text></svg>" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
@@ -21,7 +20,7 @@
     }
     .container {
       width: 100%;
-      max-width: 700px;
+      max-width: 780px;
       background: rgba(22,22,24,0.9);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -51,7 +50,7 @@
     }
     .week-header {
       padding:0.8rem; cursor:pointer; display:flex; justify-content:space-between;
-      font-weight:600; user-select:none;
+      font-weight:600; user-select:none; flex-wrap:wrap; gap:0.3rem;
     }
     .week-days { padding:0 0.8rem 0.8rem; display:none; }
     .week-days.open { display:block; }
@@ -60,10 +59,16 @@
       background:rgba(255,255,255,0.02); padding:0.5rem; border-radius:0.7rem;
       flex-wrap:wrap;
     }
-    .day-label { min-width:4rem; font-weight:600; }
+    .day-label { min-width:4.5rem; font-weight:600; }
     input[type="number"] {
-      width:70px; background:#2c2c2e; border:1px solid #3a3a3c;
+      width:65px; background:#2c2c2e; border:1px solid #3a3a3c;
       color:white; padding:0.4rem; border-radius:0.5rem; text-align:center;
+    }
+    .exercise-group {
+      display:flex; align-items:center; gap:0.2rem; flex-wrap:wrap;
+    }
+    .exercise-group span {
+      font-size:0.75rem; color:#aaa; width:32px;
     }
     .stats-panel {
       background:rgba(44,44,48,0.6); border-radius:1.2rem; padding:1rem; margin-top:1.5rem;
@@ -79,7 +84,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>💪 Полгода Прогресса</h1>
+    <h1>💪 Полгода Прогресса 2026</h1>
     <div class="subtitle">21.06.2026 – 20.12.2026 • +5 каждую неделю</div>
     <div>
       <button id="exportBtn" class="btn">📤 Сохранить</button>
@@ -90,7 +95,7 @@
     </div>
     <div id="weeksContainer"></div>
     <div class="stats-panel">
-      <div style="display:flex; justify-content:space-between;">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
         <h3>📊 Статистика</h3>
         <div id="periodButtons">
           <button class="period-btn active" data-period="week">Неделя</button>
@@ -106,16 +111,20 @@
   </div>
 
   <script>
-    console.log('Скрипт загружен');
+    console.log('Скрипт загружен (4 упражнения)');
     (function() {
       // ---------- КОНСТАНТЫ ----------
       const START_DATE = '2026-06-21';
       const TOTAL_WEEKS = 26;
-      const INITIAL_PUSHUP = 15; // на подход
-      const INITIAL_PRESS = 30;
+      const INITIAL = {
+        pushup: 15,   // отжимания (повторений в подходе)
+        press: 30,    // пресс
+        squat: 20,    // приседания
+        plank: 30     // планка (секунд в подходе)
+      };
       const SETS = 3;
       const INCREMENT = 5;
-      const STORAGE_KEY = 'fitness_plan_v2';
+      const STORAGE_KEY = 'fitness_plan_v3_4exercises';
 
       let planData = { weeks: [] };
 
@@ -130,11 +139,19 @@
           for (let i = 0; i < TOTAL_WEEKS; i++) {
             const days = [];
             for (let d = 0; d < 7; d++) {
-              days.push({ pushup: null, press: null, rest: false });
+              days.push({
+                pushup: null,
+                press: null,
+                squat: null,
+                plank: null,
+                rest: false
+              });
             }
             planData.weeks.push({
-              pushupGoal: (INITIAL_PUSHUP + i * INCREMENT) * SETS,
-              pressGoal: (INITIAL_PRESS + i * INCREMENT) * SETS,
+              pushupGoal: (INITIAL.pushup + i * INCREMENT) * SETS,
+              pressGoal: (INITIAL.press + i * INCREMENT) * SETS,
+              squatGoal: (INITIAL.squat + i * INCREMENT) * SETS,
+              plankGoal: (INITIAL.plank + i * INCREMENT) * SETS,
               days: days
             });
           }
@@ -169,8 +186,8 @@
           const header = document.createElement('div');
           header.className = 'week-header';
           header.innerHTML = `
-            <span>📅 Неделя ${wi+1} (${formatDate(getWeekStart(wi))} – ${formatDate(new Date(getWeekStart(wi).getTime()+6*86400000))})</span>
-            <span>🎯 Отж: ${week.pushupGoal} | Пресс: ${week.pressGoal}</span>
+            <span>📅 Нед.${wi+1} (${formatDate(getWeekStart(wi))} – ${formatDate(new Date(getWeekStart(wi).getTime()+6*86400000))})</span>
+            <span>🎯 Отж:${week.pushupGoal} | Пр:${week.pressGoal} | Прис:${week.squatGoal} | План:${week.plankGoal}с</span>
           `;
           header.addEventListener('click', () => {
             daysDiv.classList.toggle('open');
@@ -184,27 +201,46 @@
             date.setDate(date.getDate() + di);
             const dayRow = document.createElement('div');
             dayRow.className = 'day-row';
+
+            const disabledAttr = day.rest ? 'disabled' : '';
+            const pushupVal = day.pushup ?? '';
+            const pressVal = day.press ?? '';
+            const squatVal = day.squat ?? '';
+            const plankVal = day.plank ?? '';
+
             dayRow.innerHTML = `
               <span class="day-label">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][di]} ${formatDate(date)}</span>
-              <input type="number" class="pushup-input" placeholder="0" value="${day.pushup ?? ''}" ${day.rest ? 'disabled' : ''}>
-              <input type="number" class="press-input" placeholder="0" value="${day.press ?? ''}" ${day.rest ? 'disabled' : ''}>
-              <label><input type="checkbox" class="rest-check" ${day.rest ? 'checked' : ''}> Выходной</label>
+              <div class="exercise-group"><span>Отж</span><input type="number" class="pushup-input" value="${pushupVal}" ${disabledAttr}></div>
+              <div class="exercise-group"><span>Прс</span><input type="number" class="press-input" value="${pressVal}" ${disabledAttr}></div>
+              <div class="exercise-group"><span>Прис</span><input type="number" class="squat-input" value="${squatVal}" ${disabledAttr}></div>
+              <div class="exercise-group"><span>План</span><input type="number" class="plank-input" value="${plankVal}" ${disabledAttr}></div>
+              <label><input type="checkbox" class="rest-check" ${day.rest ? 'checked' : ''}> Вых.</label>
             `;
 
-            // События
-            dayRow.querySelector('.pushup-input').addEventListener('change', e => {
-              week.days[di].pushup = e.target.value === '' ? null : parseInt(e.target.value) || 0;
-              saveData(); updateStats();
-            });
-            dayRow.querySelector('.press-input').addEventListener('change', e => {
-              week.days[di].press = e.target.value === '' ? null : parseInt(e.target.value) || 0;
-              saveData(); updateStats();
-            });
+            // События ввода
+            const inputs = {
+              pushup: dayRow.querySelector('.pushup-input'),
+              press: dayRow.querySelector('.press-input'),
+              squat: dayRow.querySelector('.squat-input'),
+              plank: dayRow.querySelector('.plank-input')
+            };
+            for (let [key, inp] of Object.entries(inputs)) {
+              inp.addEventListener('change', e => {
+                const val = e.target.value === '' ? null : parseInt(e.target.value) || 0;
+                week.days[di][key] = val;
+                saveData();
+                updateStats();
+              });
+            }
+
+            // Выходной
             dayRow.querySelector('.rest-check').addEventListener('change', e => {
               week.days[di].rest = e.target.checked;
               if (e.target.checked) {
                 week.days[di].pushup = null;
                 week.days[di].press = null;
+                week.days[di].squat = null;
+                week.days[di].plank = null;
               }
               saveData();
               render(); // перерисовать для обновления disabled
@@ -237,15 +273,18 @@
         const startStr = start.toISOString().split('T')[0];
         const endStr = now.toISOString().split('T')[0];
 
-        let pushupSum = 0, pressSum = 0, daysCount = 0;
+        let totals = { pushup:0, press:0, squat:0, plank:0 };
+        let daysCount = 0;
         planData.weeks.forEach((week, wi) => {
           week.days.forEach((day, di) => {
             const date = new Date(getWeekStart(wi));
             date.setDate(date.getDate() + di);
             const dateStr = date.toISOString().split('T')[0];
             if (dateStr >= startStr && dateStr <= endStr && !day.rest) {
-              pushupSum += day.pushup || 0;
-              pressSum += day.press || 0;
+              totals.pushup += day.pushup || 0;
+              totals.press += day.press || 0;
+              totals.squat += day.squat || 0;
+              totals.plank += day.plank || 0;
               daysCount++;
             }
           });
@@ -253,21 +292,27 @@
 
         document.getElementById('statsText').innerHTML = `
           <div>📅 Дней: ${daysCount}</div>
-          <div>🏋️ Отжимания: <strong>${pushupSum}</strong></div>
-          <div>🔥 Пресс: <strong>${pressSum}</strong></div>
-          <div>💪 Всего: <strong>${pushupSum+pressSum}</strong></div>
+          <div>🏋️ Отжимания: <strong>${totals.pushup}</strong></div>
+          <div>🔥 Пресс: <strong>${totals.press}</strong></div>
+          <div>🦵 Приседания: <strong>${totals.squat}</strong></div>
+          <div>⏱️ Планка: <strong>${totals.plank} сек</strong></div>
+          <div>💪 Общий объём: <strong>${totals.pushup+totals.press+totals.squat+totals.plank}</strong></div>
         `;
 
-        // График
-        const labels = [], pushupData = [], pressData = [];
+        // График: 4 столбца
+        const labels = [], pushupData = [], pressData = [], squatData = [], plankData = [];
         planData.weeks.forEach((week, wi) => {
           const ws = getWeekStart(wi).toISOString().split('T')[0];
           const we = new Date(getWeekStart(wi).getTime()+6*86400000).toISOString().split('T')[0];
           if (we >= startStr && ws <= endStr) {
             labels.push('Нед.'+(wi+1));
-            let p = 0, pr = 0;
-            week.days.forEach(d => { if(!d.rest) { p += d.pushup||0; pr += d.press||0; } });
-            pushupData.push(p); pressData.push(pr);
+            let p=0, pr=0, s=0, pl=0;
+            week.days.forEach(d => {
+              if(!d.rest) {
+                p += d.pushup||0; pr += d.press||0; s += d.squat||0; pl += d.plank||0;
+              }
+            });
+            pushupData.push(p); pressData.push(pr); squatData.push(s); plankData.push(pl);
           }
         });
 
@@ -279,7 +324,9 @@
             labels,
             datasets: [
               { label:'Отжимания', data:pushupData, backgroundColor:'#ff6b6b' },
-              { label:'Пресс', data:pressData, backgroundColor:'#48dbfb' }
+              { label:'Пресс', data:pressData, backgroundColor:'#48dbfb' },
+              { label:'Приседания', data:squatData, backgroundColor:'#feca57' },
+              { label:'Планка (сек)', data:plankData, backgroundColor:'#ff9ff3' }
             ]
           },
           options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
@@ -314,13 +361,20 @@
       });
 
       document.getElementById('fillAllBtn').addEventListener('click', () => {
-        if (!confirm('Заполнить все дни по целям?')) return;
+        if (!confirm('Заполнить все дни по целям (равномерно)?')) return;
         planData.weeks.forEach(week => {
           const activeDays = week.days.filter(d => !d.rest).length || 1;
           const pushupPerDay = Math.floor(week.pushupGoal / activeDays);
           const pressPerDay = Math.floor(week.pressGoal / activeDays);
+          const squatPerDay = Math.floor(week.squatGoal / activeDays);
+          const plankPerDay = Math.floor(week.plankGoal / activeDays);
           week.days.forEach(d => {
-            if (!d.rest) { d.pushup = pushupPerDay; d.press = pressPerDay; }
+            if (!d.rest) {
+              d.pushup = pushupPerDay;
+              d.press = pressPerDay;
+              d.squat = squatPerDay;
+              d.plank = plankPerDay;
+            }
           });
         });
         saveData(); render(); updateStats();
@@ -329,7 +383,7 @@
       document.getElementById('resetBtn').addEventListener('click', () => {
         if (!confirm('Сбросить все данные?')) return;
         planData.weeks.forEach(week => week.days.forEach(d => {
-          d.pushup = null; d.press = null; d.rest = false;
+          d.pushup = null; d.press = null; d.squat = null; d.plank = null; d.rest = false;
         }));
         saveData(); render(); updateStats();
       });
