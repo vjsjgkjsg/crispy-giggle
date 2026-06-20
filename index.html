@@ -2,99 +2,180 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
-  <title>💪 Полгода прогресса · Отжимания & Пресс</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>💪 Полгода Прогресса</title>
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text y='50' font-size='50'>💪</text></svg>" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: #0c0c0e;
+      background: #0a0a0c;
       color: #f0f0f0;
-      padding: 1.2rem;
+      padding: 1rem;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
     }
     .container {
       width: 100%;
-      max-width: 800px;
-      background: rgba(22, 22, 24, 0.85);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-radius: 2.2rem;
-      padding: 1.8rem;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 1px 1px rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.07);
+      max-width: 700px;
+      background: rgba(22, 22, 24, 0.9);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 2rem;
+      padding: 1.5rem 1.2rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.08);
     }
     h1 {
+      font-size: 1.8rem;
       font-weight: 700;
-      font-size: 2rem;
       background: linear-gradient(135deg, #ff6b6b, #feca57);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.4rem;
     }
     .subtitle {
       color: #8e8e93;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+      align-items: center;
     }
-    .plan-table {
-      overflow-x: auto;
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.2rem;
+    }
+    .btn {
+      background: #2c2c2e;
+      border: 1px solid #444;
+      color: #f0f0f0;
+      padding: 0.65rem 1rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+    .btn.primary {
+      background: #ff6b6b;
+      border-color: #ff6b6b;
+    }
+    .btn:active { transform: scale(0.97); }
+    .week-accordion {
       border-radius: 1rem;
-      margin: 1.5rem 0;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
+      overflow: hidden;
+      margin-bottom: 0.8rem;
       background: rgba(44, 44, 48, 0.5);
       backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.05);
     }
-    th, td {
-      padding: 0.8rem 0.6rem;
-      text-align: center;
-      border-bottom: 1px solid #3a3a3c;
+    .week-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 600;
+    }
+    .week-header:hover {
+      background: rgba(255,255,255,0.03);
+    }
+    .week-number {
+      font-weight: 700;
+      color: #feca57;
+      margin-right: 0.5rem;
+    }
+    .week-dates {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-left: 0.4rem;
+    }
+    .week-progress {
+      font-size: 0.85rem;
+      background: #ff6b6b;
+      color: white;
+      border-radius: 1rem;
+      padding: 0.25rem 0.8rem;
+    }
+    .week-days {
+      padding: 0 1rem 0.8rem;
+      display: none;
+    }
+    .week-days.open {
+      display: block;
+    }
+    .day-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0.6rem 0;
+      background: rgba(255,255,255,0.02);
+      padding: 0.5rem;
+      border-radius: 0.7rem;
+    }
+    .day-label {
+      min-width: 2.2rem;
+      font-weight: 600;
       font-size: 0.9rem;
     }
-    th {
-      background: rgba(255,255,255,0.05);
-      font-weight: 600;
-      color: #feca57;
+    .exercise-input {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex: 1;
+      min-width: 100px;
     }
-    .done-check {
-      width: 1.2rem;
-      height: 1.2rem;
-      accent-color: #4caf50;
-      transform: scale(1.2);
-      cursor: pointer;
-    }
-    .fact-input {
-      width: 60px;
+    .exercise-input input {
+      width: 70px;
       background: #2c2c2e;
       border: 1px solid #3a3a3c;
-      border-radius: 0.5rem;
-      padding: 0.3rem 0.4rem;
       color: white;
+      padding: 0.4rem;
+      border-radius: 0.5rem;
       text-align: center;
+      font-size: 0.9rem;
     }
-    .week-row:hover { background: rgba(255,255,255,0.03); }
-    .goal-text { font-weight: 600; color: #ff8c52; }
+    .rest-check {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+    .rest-check input {
+      width: 1.1rem;
+      height: 1.1rem;
+      accent-color: #feca57;
+    }
     .stats-panel {
       background: rgba(44, 44, 48, 0.6);
       border-radius: 1.2rem;
-      padding: 1.2rem;
+      padding: 1rem;
       margin-top: 1.5rem;
     }
-    .period-btns {
+    .period-selector {
       display: flex;
-      gap: 0.4rem;
       flex-wrap: wrap;
+      gap: 0.4rem;
       margin-bottom: 1rem;
     }
     .period-btn {
@@ -112,71 +193,38 @@
       color: #0a0a0a;
       border-color: #feca57;
     }
-    canvas { margin-top: 1rem; }
-    .btn-row {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-      margin: 1rem 0;
+    canvas {
+      margin-top: 0.8rem;
     }
-    .btn {
-      background: #3a3a3c;
-      border: none;
-      border-radius: 0.8rem;
-      padding: 0.5rem 1.1rem;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .btn.primary { background: #ff6b6b; }
-    @media (max-width: 600px) {
+    @media (max-width: 480px) {
       .container { padding: 1rem; }
-      th, td { padding: 0.5rem 0.3rem; font-size: 0.8rem; }
+      .day-row { flex-direction: column; align-items: flex-start; }
+      .exercise-input { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📅 Полгода силы</h1>
+    <h1>💪 Полгода прогресса</h1>
     <div class="subtitle">
-      <span>Старт: 21.06.2026</span>
-      <span>⏳ 26 недель</span>
-      <span>📈 +5 каждую неделю</span>
+      <span>📅 21.06.2026 – 20.12.2026</span>
+      <span>📈 +5/нед.</span>
     </div>
 
-    <div class="btn-row">
-      <button id="exportBtn" class="btn">📤 Скачать</button>
+    <div class="btn-group">
+      <button id="exportBtn" class="btn">📤 Сохранить</button>
       <button id="importBtn" class="btn">📥 Загрузить</button>
       <input type="file" id="importFile" accept=".json" hidden>
-      <button id="resetBtn" class="btn primary">🔄 Сбросить прогресс</button>
+      <button id="fillAllBtn" class="btn primary">⚡ Заполнить всё по целям</button>
+      <button id="resetBtn" class="btn">🔄 Сброс</button>
     </div>
 
-    <div class="plan-table">
-      <table id="planTable">
-        <thead>
-          <tr>
-            <th>Неделя</th>
-            <th>Даты</th>
-            <th>Отжимания<br><small>3×?</small></th>
-            <th>✅</th>
-            <th>Факт</th>
-            <th>Пресс<br><small>3×?</small></th>
-            <th>✅</th>
-            <th>Факт</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
+    <div id="weeksContainer"></div>
 
     <div class="stats-panel">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="margin:0;">📊 Статистика</h3>
-        <div class="period-btns" id="periodButtons">
+        <div class="period-selector" id="periodButtons">
           <button class="period-btn active" data-period="week">Неделя</button>
           <button class="period-btn" data-period="month">Месяц</button>
           <button class="period-btn" data-period="quarter">3 мес</button>
@@ -185,58 +233,64 @@
         </div>
       </div>
       <div id="statsText" style="margin:0.8rem 0;"></div>
-      <canvas id="progressChart" width="400" height="200"></canvas>
+      <canvas id="progressChart" width="300" height="180"></canvas>
     </div>
   </div>
 
   <script>
     (function() {
-      // ---------- Константы программы ----------
+      // ---------- Параметры плана ----------
       const START_DATE = '2026-06-21';
       const TOTAL_WEEKS = 26;
-      const INITIAL_PUSHUP = 15;  // повторений в подходе
-      const INITIAL_PRESS = 30;
+      const INITIAL_PUSHUP_PER_SET = 15; // 3 подхода по 15
+      const INITIAL_PRESS_PER_SET = 30;
       const SETS = 3;
       const WEEKLY_INCREMENT = 5;
 
-      // ---------- Хранилище ----------
-      const STORAGE_KEY = 'halfyear_plan_data';
+      // ---------- Состояние ----------
+      const STORAGE_KEY = 'halfyear_daily_plan';
       let planData = {
         startDate: START_DATE,
-        weeks: [] // { weekIndex, pushupGoal, pressGoal, pushupDone, pressDone, pushupActual, pressActual }
+        weeks: []
       };
 
-      // Загрузка / сохранение
+      // Инициализация структуры
+      function createDefaultWeeks() {
+        const weeks = [];
+        for (let i = 0; i < TOTAL_WEEKS; i++) {
+          const pushupGoal = (INITIAL_PUSHUP_PER_SET + i * WEEKLY_INCREMENT) * SETS;
+          const pressGoal = (INITIAL_PRESS_PER_SET + i * WEEKLY_INCREMENT) * SETS;
+          const days = [];
+          for (let d = 0; d < 7; d++) {
+            days.push({
+              pushupActual: null,
+              pressActual: null,
+              rest: false
+            });
+          }
+          weeks.push({
+            weekIndex: i,
+            pushupGoal,
+            pressGoal,
+            days
+          });
+        }
+        return weeks;
+      }
+
       function loadData() {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
           try {
-            const parsed = JSON.parse(saved);
-            planData = parsed;
-            // убедимся, что 26 недель существуют
+            planData = JSON.parse(saved);
             if (!planData.weeks || planData.weeks.length !== TOTAL_WEEKS) {
-              generateDefaultWeeks();
+              planData.weeks = createDefaultWeeks();
             }
           } catch (e) {
-            generateDefaultWeeks();
+            planData.weeks = createDefaultWeeks();
           }
         } else {
-          generateDefaultWeeks();
-        }
-      }
-
-      function generateDefaultWeeks() {
-        planData.weeks = [];
-        for (let i = 0; i < TOTAL_WEEKS; i++) {
-          planData.weeks.push({
-            weekIndex: i,
-            pushupGoal: (INITIAL_PUSHUP + i * WEEKLY_INCREMENT) * SETS,
-            pressGoal: (INITIAL_PRESS + i * WEEKLY_INCREMENT) * SETS,
-            pushupDone: false,
-            pressDone: false,
-            pushupActual: null,
-            pressActual: null
-          });
+          planData.weeks = createDefaultWeeks();
         }
         planData.startDate = START_DATE;
       }
@@ -252,134 +306,225 @@
         return start;
       }
 
-      function formatDateRange(weekIndex) {
-        const start = getWeekStartDate(weekIndex);
-        const end = new Date(start);
-        end.setDate(end.getDate() + 6);
-        const fmt = d => d.toISOString().split('T')[0].split('-').reverse().join('.');
-        return `${fmt(start)} – ${fmt(end)}`;
+      function formatDate(date) {
+        return date.toISOString().split('T')[0].split('-').reverse().join('.');
       }
 
-      // ---------- Отрисовка таблицы ----------
-      const tbody = document.querySelector('#planTable tbody');
+      function getDayDate(weekIndex, dayIndex) {
+        const weekStart = getWeekStartDate(weekIndex);
+        const day = new Date(weekStart);
+        day.setDate(day.getDate() + dayIndex);
+        return day;
+      }
 
-      function renderTable() {
-        tbody.innerHTML = '';
+      // ---------- Рендер ----------
+      const container = document.getElementById('weeksContainer');
+
+      function renderWeeks() {
+        container.innerHTML = '';
         planData.weeks.forEach((week, idx) => {
-          const row = document.createElement('tr');
-          row.className = 'week-row';
-          const pushupGoal = week.pushupGoal;
-          const pressGoal = week.pressGoal;
-          const pushupPerSet = pushupGoal / SETS;
-          const pressPerSet = pressGoal / SETS;
+          const weekDiv = document.createElement('div');
+          weekDiv.className = 'week-accordion';
 
-          row.innerHTML = `
-            <td><strong>${idx + 1}</strong></td>
-            <td>${formatDateRange(idx)}</td>
-            <td><span class="goal-text">3×${pushupPerSet}</span> (${pushupGoal})</td>
-            <td><input type="checkbox" class="done-check pushup-done" data-week="${idx}" ${week.pushupDone ? 'checked' : ''}></td>
-            <td><input type="number" class="fact-input pushup-actual" data-week="${idx}" value="${week.pushupActual ?? ''}" placeholder="${pushupGoal}" min="0"></td>
-            <td><span class="goal-text">3×${pressPerSet}</span> (${pressGoal})</td>
-            <td><input type="checkbox" class="done-check press-done" data-week="${idx}" ${week.pressDone ? 'checked' : ''}></td>
-            <td><input type="number" class="fact-input press-actual" data-week="${idx}" value="${week.pressActual ?? ''}" placeholder="${pressGoal}" min="0"></td>
+          // Подсчёт выполненных повторений за неделю
+          let totalPushupDone = 0, totalPressDone = 0;
+          week.days.forEach(day => {
+            if (!day.rest) {
+              totalPushupDone += day.pushupActual || 0;
+              totalPressDone += day.pressActual || 0;
+            }
+          });
+          const pushupPercent = Math.min(100, Math.round((totalPushupDone / week.pushupGoal) * 100));
+          const pressPercent = Math.min(100, Math.round((totalPressDone / week.pressGoal) * 100));
+          const overallPercent = Math.round((pushupPercent + pressPercent) / 2);
+
+          weekDiv.innerHTML = `
+            <div class="week-header" data-week="${idx}">
+              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <span class="week-number">Неделя ${idx+1}</span>
+                <span class="week-dates">${formatDate(getWeekStartDate(idx))} – ${formatDate(new Date(getWeekStartDate(idx).getTime()+6*86400000))}</span>
+              </div>
+              <span class="week-progress">${overallPercent}%</span>
+            </div>
+            <div class="week-days" data-week="${idx}">
+              ${week.days.map((day, dayIdx) => {
+                const date = getDayDate(idx, dayIdx);
+                const dayName = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'][dayIdx];
+                return `
+                  <div class="day-row">
+                    <span class="day-label">${dayName} ${formatDate(date)}</span>
+                    <div class="exercise-input">
+                      <span style="font-size:0.8rem;">Отж.</span>
+                      <input type="number" class="pushup-input" data-week="${idx}" data-day="${dayIdx}" 
+                             value="${day.pushupActual ?? ''}" placeholder="0" min="0" 
+                             ${day.rest ? 'disabled' : ''}>
+                    </div>
+                    <div class="exercise-input">
+                      <span style="font-size:0.8rem;">Пресс</span>
+                      <input type="number" class="press-input" data-week="${idx}" data-day="${dayIdx}" 
+                             value="${day.pressActual ?? ''}" placeholder="0" min="0" 
+                             ${day.rest ? 'disabled' : ''}>
+                    </div>
+                    <label class="rest-check">
+                      <input type="checkbox" class="rest-checkbox" data-week="${idx}" data-day="${dayIdx}" ${day.rest ? 'checked' : ''}>
+                      Выходной
+                    </label>
+                  </div>
+                `;
+              }).join('')}
+              <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                <button class="btn primary small fill-week-btn" data-week="${idx}">🎯 Заполнить по цели</button>
+                <button class="btn small mark-done-btn" data-week="${idx}">✅ Отметить всё сделано</button>
+              </div>
+            </div>
           `;
-          tbody.appendChild(row);
+          container.appendChild(weekDiv);
         });
 
-        // Навешиваем события
-        document.querySelectorAll('.pushup-done').forEach(cb => {
+        // Аккордеон: клик по заголовку
+        document.querySelectorAll('.week-header').forEach(header => {
+          header.addEventListener('click', (e) => {
+            const weekIdx = e.currentTarget.dataset.week;
+            const daysDiv = document.querySelector(`.week-days[data-week="${weekIdx}"]`);
+            daysDiv.classList.toggle('open');
+          });
+        });
+
+        // Обработчики ввода
+        document.querySelectorAll('.pushup-input, .press-input').forEach(input => {
+          input.addEventListener('change', (e) => {
+            const weekIdx = parseInt(e.target.dataset.week);
+            const dayIdx = parseInt(e.target.dataset.day);
+            const field = e.target.classList.contains('pushup-input') ? 'pushupActual' : 'pressActual';
+            let val = e.target.value === '' ? null : parseInt(e.target.value);
+            if (val !== null && isNaN(val)) val = null;
+            planData.weeks[weekIdx].days[dayIdx][field] = val;
+            saveData();
+            renderWeeks(); // перерисовать для обновления процентов
+            updateStats();
+          });
+        });
+
+        // Чекбокс выходного
+        document.querySelectorAll('.rest-checkbox').forEach(cb => {
           cb.addEventListener('change', (e) => {
             const weekIdx = parseInt(e.target.dataset.week);
-            planData.weeks[weekIdx].pushupDone = e.target.checked;
+            const dayIdx = parseInt(e.target.dataset.day);
+            planData.weeks[weekIdx].days[dayIdx].rest = e.target.checked;
+            if (e.target.checked) {
+              planData.weeks[weekIdx].days[dayIdx].pushupActual = null;
+              planData.weeks[weekIdx].days[dayIdx].pressActual = null;
+            }
             saveData();
+            renderWeeks();
             updateStats();
           });
         });
-        document.querySelectorAll('.press-done').forEach(cb => {
-          cb.addEventListener('change', (e) => {
-            const weekIdx = parseInt(e.target.dataset.week);
-            planData.weeks[weekIdx].pressDone = e.target.checked;
+
+        // Кнопка "Заполнить по цели" — равномерно распределяет цель на дни без выходных
+        document.querySelectorAll('.fill-week-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const weekIdx = parseInt(e.currentTarget.dataset.week);
+            const week = planData.weeks[weekIdx];
+            const activeDays = week.days.filter(d => !d.rest).length || 1;
+            const pushupPerDay = Math.floor(week.pushupGoal / activeDays);
+            const pressPerDay = Math.floor(week.pressGoal / activeDays);
+            week.days.forEach(day => {
+              if (!day.rest) {
+                day.pushupActual = pushupPerDay;
+                day.pressActual = pressPerDay;
+              }
+            });
             saveData();
+            renderWeeks();
             updateStats();
           });
         });
-        document.querySelectorAll('.pushup-actual').forEach(inp => {
-          inp.addEventListener('change', (e) => {
-            const weekIdx = parseInt(e.target.dataset.week);
-            const val = e.target.value === '' ? null : parseInt(e.target.value);
-            planData.weeks[weekIdx].pushupActual = isNaN(val) ? null : val;
+
+        // Кнопка "Отметить всё сделано" — ставит фактические значения равными целям на каждый день (если не выходной)
+        document.querySelectorAll('.mark-done-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const weekIdx = parseInt(e.currentTarget.dataset.week);
+            const week = planData.weeks[weekIdx];
+            const activeDays = week.days.filter(d => !d.rest).length || 1;
+            const pushupPerDay = Math.floor(week.pushupGoal / activeDays);
+            const pressPerDay = Math.floor(week.pressGoal / activeDays);
+            week.days.forEach(day => {
+              if (!day.rest) {
+                day.pushupActual = pushupPerDay;
+                day.pressActual = pressPerDay;
+              }
+            });
             saveData();
-            updateStats();
-          });
-        });
-        document.querySelectorAll('.press-actual').forEach(inp => {
-          inp.addEventListener('change', (e) => {
-            const weekIdx = parseInt(e.target.dataset.week);
-            const val = e.target.value === '' ? null : parseInt(e.target.value);
-            planData.weeks[weekIdx].pressActual = isNaN(val) ? null : val;
-            saveData();
+            renderWeeks();
             updateStats();
           });
         });
       }
 
-      // ---------- Статистика ----------
+      // ---------- Статистика и график ----------
       let chart = null;
       let currentPeriod = 'week';
 
       function getPeriodStart(period) {
-        const ref = new Date(); // для реальной статистики используем сегодня, но план до декабря 2026
-        const d = new Date(ref);
+        const now = new Date();
+        const d = new Date(now);
         switch(period) {
-          case 'week': d.setDate(d.getDate() - 7); break;
-          case 'month': d.setMonth(d.getMonth() - 1); break;
-          case 'quarter': d.setMonth(d.getMonth() - 3); break;
-          case 'halfyear': d.setMonth(d.getMonth() - 6); break;
-          case 'year': d.setFullYear(d.getFullYear() - 1); break;
+          case 'week': d.setDate(d.getDate()-7); break;
+          case 'month': d.setMonth(d.getMonth()-1); break;
+          case 'quarter': d.setMonth(d.getMonth()-3); break;
+          case 'halfyear': d.setMonth(d.getMonth()-6); break;
+          case 'year': d.setFullYear(d.getFullYear()-1); break;
         }
         return d.toISOString().split('T')[0];
       }
 
       function updateStats() {
-        const today = new Date().toISOString().split('T')[0];
         const startPeriod = getPeriodStart(currentPeriod);
+        const endPeriod = new Date().toISOString().split('T')[0];
         
-        // Фильтруем недели, чей диапазон попадает в период (хотя бы частично)
-        const relevantWeeks = planData.weeks.filter((_, idx) => {
-          const weekStart = getWeekStartDate(idx).toISOString().split('T')[0];
-          const weekEnd = new Date(getWeekStartDate(idx));
-          weekEnd.setDate(weekEnd.getDate() + 6);
-          const weekEndStr = weekEnd.toISOString().split('T')[0];
-          return weekStart <= today && weekEndStr >= startPeriod;
-        });
-
+        // Собираем все дни, попадающие в период
         let pushupTotal = 0, pressTotal = 0;
-        let completedWeeks = 0;
-        relevantWeeks.forEach(w => {
-          const pushActual = w.pushupActual !== null ? w.pushupActual : (w.pushupDone ? w.pushupGoal : 0);
-          const pressActual = w.pressActual !== null ? w.pressActual : (w.pressDone ? w.pressGoal : 0);
-          pushupTotal += pushActual;
-          pressTotal += pressActual;
-          if (w.pushupDone || w.pushupActual !== null || w.pressDone || w.pressActual !== null) {
-            completedWeeks++;
-          }
+        let daysCount = 0;
+        planData.weeks.forEach((week, wi) => {
+          week.days.forEach((day, di) => {
+            const date = getDayDate(wi, di).toISOString().split('T')[0];
+            if (date >= startPeriod && date <= endPeriod) {
+              if (!day.rest) {
+                pushupTotal += day.pushupActual || 0;
+                pressTotal += day.pressActual || 0;
+                daysCount++;
+              }
+            }
+          });
         });
 
         document.getElementById('statsText').innerHTML = `
-          <div>✅ Активных недель в периоде: ${completedWeeks} / ${relevantWeeks.length}</div>
-          <div>🏋️ Отжимания всего: <strong>${pushupTotal}</strong> повторений</div>
-          <div>🔥 Пресс всего: <strong>${pressTotal}</strong> повторений</div>
+          <div>📅 Дней в периоде: ${daysCount}</div>
+          <div>🏋️ Отжимания: <strong>${pushupTotal}</strong> раз</div>
+          <div>🔥 Пресс: <strong>${pressTotal}</strong> раз</div>
           <div>💪 Общий объём: <strong>${pushupTotal + pressTotal}</strong></div>
         `;
 
-        // График: суммарные повторения по неделям (факт или цель, если выполнено)
+        // График по неделям (суммарно за каждую неделю, попадающую в период)
         const labels = [];
         const pushupData = [];
         const pressData = [];
-        relevantWeeks.forEach((w, i) => {
-          labels.push(`Нед. ${w.weekIndex + 1}`);
-          pushupData.push(w.pushupActual !== null ? w.pushupActual : (w.pushupDone ? w.pushupGoal : 0));
-          pressData.push(w.pressActual !== null ? w.pressActual : (w.pressDone ? w.pressGoal : 0));
+        planData.weeks.forEach((week, wi) => {
+          const weekStart = getWeekStartDate(wi).toISOString().split('T')[0];
+          const weekEnd = new Date(getWeekStartDate(wi).getTime()+6*86400000).toISOString().split('T')[0];
+          if (weekStart <= endPeriod && weekEnd >= startPeriod) {
+            labels.push(`Нед.${wi+1}`);
+            let wp = 0, wpr = 0;
+            week.days.forEach(day => {
+              if (!day.rest) {
+                wp += day.pushupActual || 0;
+                wpr += day.pressActual || 0;
+              }
+            });
+            pushupData.push(wp);
+            pressData.push(wpr);
+          }
         });
 
         const ctx = document.getElementById('progressChart').getContext('2d');
@@ -395,6 +540,7 @@
           },
           options: {
             responsive: true,
+            maintainAspectRatio: true,
             plugins: { legend: { position: 'bottom' } },
             scales: {
               y: { beginAtZero: true, grid: { color: '#3a3a3c' }, ticks: { color: '#ccc' } },
@@ -409,9 +555,44 @@
         document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         updateStats();
+      
+
+      
+      // ---------- Кнопки управления ----------
+      function fillAllWeeks() {
+        if (confirm('Заполнить все дни по целям (равномерно распределяя)?')) {
+          planData.weeks.forEach(week => {
+            const activeDays = week.days.filter(d => !d.rest).length || 1;
+            const pushupPerDay = Math.floor(week.pushupGoal / activeDays);
+            const pressPerDay = Math.floor(week.pressGoal / activeDays);
+            week.days.forEach(day => {
+              if (!day.rest) {
+                day.pushupActual = pushupPerDay;
+                day.pressActual = pressPerDay;
+              }
+            });
+          });
+          saveData();
+          renderWeeks();
+          updateStats();
+        }
       }
 
-      // ---------- Экспорт / Импорт / Сброс ----------
+      function resetProgress() {
+        if (confirm('Сбросить все фактические данные и выходные?')) {
+          planData.weeks.forEach(week => {
+            week.days.forEach(day => {
+              day.pushupActual = null;
+              day.pressActual = null;
+              day.rest = false;
+            });
+          });
+          saveData();
+          renderWeeks();
+          updateStats();
+        }
+      }
+
       function exportData() {
         const blob = new Blob([JSON.stringify(planData, null, 2)], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -427,40 +608,26 @@
         reader.onload = (e) => {
           try {
             const data = JSON.parse(e.target.result);
-            if (data.weeks && data.startDate) {
+            if (data.weeks) {
               planData = data;
               saveData();
-              renderTable();
+              renderWeeks();
               updateStats();
               alert('План загружен!');
             } else {
-              alert('Неверный формат файла');
+              alert('Неверный файл');
             }
           } catch (err) {
-            alert('Ошибка чтения файла');
+            alert('Ошибка чтения');
           }
         };
         reader.readAsText(file);
       }
 
-      function resetProgress() {
-        if (confirm('Точно сбросить все отметки и фактические повторения? Цели останутся.')) {
-          planData.weeks.forEach(w => {
-            w.pushupDone = false;
-            w.pressDone = false;
-            w.pushupActual = null;
-            w.pressActual = null;
-          });
-          saveData();
-          renderTable();
-          updateStats();
-        }
-      }
-
       // ---------- Инициализация ----------
       function init() {
         loadData();
-        renderTable();
+        renderWeeks();
         updateStats();
 
         document.getElementById('exportBtn').addEventListener('click', exportData);
@@ -468,6 +635,7 @@
         document.getElementById('importFile').addEventListener('change', (e) => {
           if (e.target.files[0]) importData(e.target.files[0]);
         });
+        document.getElementById('fillAllBtn').addEventListener('click', fillAllWeeks);
         document.getElementById('resetBtn').addEventListener('click', resetProgress);
 
         document.getElementById('periodButtons').addEventListener('click', (e) => {
