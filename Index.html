@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=yes">
+  <title>🏋️ Твой Фитнес Дневник</title>
+  <!-- Chart.js для графиков -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(145deg, #0f0f0f 0%, #1a1a1a 100%);
+      min-height: 100vh;
+      color: #e0e0e0;
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 750px;
+      background: rgba(28, 28, 30, 0.8);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius: 2.5rem;
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.6), inset 0 1px 1px rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.08);
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 650;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .subtitle {
+      color: #8e8e93;
+      margin-bottom: 2rem;
+      font-weight: 400;
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: rgba(44, 44, 46, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 1.8rem;
+      padding: 1.5rem 1.3rem;
+      margin-bottom: 1.8rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      box-shadow: 0 10px 20px -8px rgba(0,0,0,0.4);
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      flex: 1 1 140px;
+    }
+
+    label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #a0a0a6;
+      font-weight: 600;
+    }
+
+    input, select, button {
+      background: #2c2c2e;
+      border: 1px solid #3a3a3c;
+      border-radius: 1rem;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      color: #fff;
+      outline: none;
+      transition: all 0.2s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    input:focus, select:focus {
+      border-color: #feca57;
+      box-shadow: 0 0 0 3px rgba(254, 202, 87, 0.25);
+    }
+
+    button {
+      background: #ff6b6b;
+      border: none;
+      color: white;
+      font-weight: 650;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.3rem;
+      padding: 0.75rem 1.4rem;
+      letter-spacing: 0.3px;
+      box-shadow: 0 6px 16px rgba(255, 107, 107, 0.3);
+      transition: 0.2s;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #ff5252;
+      box-shadow: 0 10px 20px rgba(255, 82, 82, 0.4);
+      transform: scale(1.02);
+    }
+
+    button.secondary {
+      background: #3a3a3c;
+      box-shadow: none;
+      color: #ddd;
+    }
+
+    button.secondary:hover {
+      background: #4a4a4c;
+    }
+
+    .exercise-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #3a3a3c;
+      border-radius: 2rem;
+      padding: 0.4rem 1rem;
+      margin: 0.25rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      padding: 0.9rem 1rem;
+      border-radius: 1.2rem;
+      margin-bottom: 0.6rem;
+      border-left: 4px solid #feca57;
+    }
+
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: #ff6b6b;
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.8rem;
+    }
+
+    .period-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0 1.2rem;
+    }
+
+    .period-btn {
+      background: #2c2c2e;
+      border: 1px solid #444;
+      padding: 0.55rem 1.2rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #ccc;
+      transition: 0.2s;
+    }
+
+    .period-btn.active {
+      background: #feca57;
+      color: #1a1a1a;
+      border-color: #feca57;
+      font-weight: 700;
+      box-shadow: 0 0 12px #feca57aa;
+    }
+
+    .stat-summary {
+      background: #1c1c1e;
+      border-radius: 1.5rem;
+      padding: 1.2rem;
+      margin: 1rem 0;
+      font-weight: 500;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      max-height: 280px;
+      margin-top: 0.8rem;
+    }
+
+    hr {
+      border-color: #333;
+      margin: 1.2rem 0;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1.2rem;
+      }
+      .input-group {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏋️‍♂️ Твой трекер</h1>
+    <div class="subtitle">Отжимания, пресс, что угодно — каждый день</div>
+
+    <!-- Форма добавления -->
+    <div class="card">
+      <div class="input-group">
+        <div class="field">
+          <label>📅 Дата</label>
+          <input type="date" id="dateInput" />
+        </div>
+        <div class="field">
+          <label>🏃 Упражнение</label>
+          <input type="text" id="exerciseInput" placeholder="Например: отжимания" list="exerciseSuggestions" autocomplete="off" />
+          <datalist id="exerciseSuggestions"></datalist>
+        </div>
+        <div class="field">
+          <label>🔢 Повторений</label>
+          <input type="number" id="repsInput" placeholder="50" min="1" step="1" value="30" />
+        </div>
+        <button id="addBtn">➕ Добавить</button>
+      </div>
+      <div style="font-size:0.8rem; color:#8e8e93;">💡 Введи любое упражнение, оно запомнится</div>
+    </div>
+
+    <!-- Сегодняшние записи -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3 style="margin:0;">📋 Записи за <span id="selectedDateDisplay">сегодня</span></h3>
+        <button id="todayBtn" class="secondary" style="padding:0.5rem 1rem;">Сегодня</button>
+      </div>
+      <div id="dailyList" style="margin-top:1rem;">Нет записей</div>
+    </div>
+
+    <!-- Статистика по периодам -->
+    <div class="card">
+      <h3 style="margin-bottom:0.3rem;">📊 Общий вывод</h3>
+      <div class="period-selector" id="periodButtons">
+        <button class="period-btn active" data-period="week">Неделя</button>
+        <button class="period-btn" data-period="month">Месяц</button>
+        <button class="period-btn" data-period="quarter">3 месяца</button>
+        <button class="period-btn" data-period="halfyear">6 месяцев</button>
+        <button class="period-btn" data-period="year">Год</button>
+      </div>
+      <div id="periodStats" class="stat-summary">Выберите период</div>
+      <div style="margin-top:1rem;">
+        <canvas id="progressChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // ---------- Хранилище ----------
+      const STORAGE_KEY = 'fitnessSuperTracker';
+
+      // Структура данных: массив объектов { id, date, exercise, reps }
+      let records = [];
+
+      // Загрузка из localStorage
+      function loadFromStorage() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            records = JSON.parse(stored);
+          } catch (e) {
+            records = [];
+          }
+        } else {
+          // Демо-данные для первого знакомства (можно удалить)
+          records = [
+            { id: Date.now() + 1, date: new Date().toISOString().split('T')[0], exercise: 'отжимания', reps: 40 },
+            { id: Date.now() + 2, date: new Date().toISOString().split('T')[0], exercise: 'пресс', reps: 60 }
+          ];
+        }
+        // Сортируем по дате (новые сверху)
+        records.sort((a,b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+      }
+
+      function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      }
+
+      // ---------- Вспомогательные функции ----------
+      function getTodayISO() {
+        return new Date().toISOString().split('T')[0];
+      }
+
+      function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const [y,m,d] = dateStr.split('-');
+        return `${d}.${m}.${y}`;
+      }
+
+      // Получить начало периода относительно опорной даты (обычно сегодня)
+      function getPeriodStart(period, referenceDate = new Date()) {
+        const d = new Date(referenceDate);
+        switch(period) {
+          case 'week': d.setDate(d.getDate() - 7); break;
+          case 'month': d.setMonth(d.getMonth() - 1); break;
+          case 'quarter': d.setMonth(d.getMonth() - 3); break;
+          case 'halfyear': d.setMonth(d.getMonth() - 6); break;
+          case 'year': d.setFullYear(d.getFullYear() - 1); break;
+          default: return null;
+        }
+        return d.toISOString().split('T')[0];
+      }
+
+      // Фильтрация записей по диапазону дат
+      function filterByDateRange(startDate, endDate) {
+        return records.filter(r => r.date >= startDate && r.date <= endDate);
+      }
+
+      // Агрегация по упражнениям
+      function aggregateByExercise(recs) {
+        const map = new Map();
+        recs.forEach(r => {
+          const ex = r.exercise.trim().toLowerCase() || 'без названия';
+          map.set(ex, (map.get(ex) || 0) + Number(r.reps || 0));
+        });
+        return Array.from(map.entries()).sort((a,b) => b[1]-a[1]);
+      }
+
+      // ---------- DOM элементы ----------
+      const dateInput = document.getElementById('dateInput');
+      const exerciseInput = document.getElementById('exerciseInput');
+      const repsInput = document.getElementById('repsInput');
+      const addBtn = document.getElementById('addBtn');
+      const dailyListDiv = document.getElementById('dailyList');
+      const selectedDateDisplay = document.getElementById('selectedDateDisplay');
+      const todayBtn = document.getElementById('todayBtn');
+      const periodButtons = document.getElementById('periodButtons');
+      const periodStatsDiv = document.getElementById('periodStats');
+      const suggestionsList = document.getElementById('exerciseSuggestions');
+      
+      let chartInstance = null;
+      let currentPeriod = 'week';
+
+      // Установить дату в поле ввода на сегодня
+      function setDateToToday() {
+        dateInput.value = getTodayISO();
+        updateSelectedDateDisplay();
+        renderDailyList();
+      }
+
+      function updateSelectedDateDisplay() {
+        const val = dateInput.value;
+        if (val === getTodayISO()) {
+          selectedDateDisplay.textContent = 'сегодня';
+        } else {
+          selectedDateDisplay.textContent = formatDate(val);
+        }
+      }
+
+      // Обновить список подсказок упражнений
+      function updateSuggestions() {
+        const uniqueExercises = [...new Set(records.map(r => r.exercise.trim()).filter(Boolean))];
+        suggestionsList.innerHTML = '';
+        uniqueExercises.forEach(ex => {
+          const option = document.createElement('option');
+          option.value = ex;
+          suggestionsList.appendChild(option);
+        });
+      }
+
+      // Отрисовка записей за выбранную дату
+      function renderDailyList() {
+        const selectedDate = dateInput.value;
+        if (!selectedDate) return;
+        
+        const dayRecords = records.filter(r => r.date === selectedDate);
+        if (dayRecords.length === 0) {
+          dailyListDiv.innerHTML = '<div style="color:#8e8e93; padding:1rem;">Пока нет записей на этот день</div>';
+          return;
+        }
+
+        let html = '';
+        dayRecords.forEach(rec => {
+          html += `
+            <div class="list-item">
+              <span><strong>${rec.exercise}</strong> — ${rec.reps} повторений</span>
+              <button class="delete-btn" data-id="${rec.id}" title="Удалить">🗑️</button>
+            </div>
+          `;
+        });
+        dailyListDiv.innerHTML = html;
+
+        // Навесить обработчики удаления
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const id = Number(e.currentTarget.getAttribute('data-id'));
+            deleteRecordById(id);
+          });
+        });
+      }
+
+      function deleteRecordById(id) {
+        records = records.filter(r => r.id !== id);
+        saveToStorage();
+        updateSuggestions();
+        renderDailyList();
+        updatePeriodStatsAndChart();
+      }
+
+      // Добавление новой записи
+      function addRecord() {
+        const date = dateInput.value;
+        const exercise = exerciseInput.value.trim();
+        const reps = parseInt(repsInput.value, 10);
+
+        if (!date) {
+          alert('Выбери дату');
+          return;
+        }
+        if (!exercise) {
+          alert('Введи название упражнения');
+          return;
+        }
+        if (isNaN(reps) || reps <= 0) {
+          alert('Количество повторений должно быть больше нуля');
+          return;
+        }
+
+        const newRecord = {
+          id: Date.now(), // уникальный ID
+          date: date,
+          exercise: exercise,
+          reps: reps
+        };
+
+        records.push(newRecord);
+        records.sort((a,b) => (b.date || '').localeCompare(a.date || '') || b.id - a.id);
+        saveToStorage();
+        updateSuggestions();
+        
+        // Очистить поле упражнения (но не дату)
+        exerciseInput.value = '';
+        repsInput.value = 30;
+        
+        renderDailyList();
+        updatePeriodStatsAndChart();
+      }
+
+      // Обновление статистики и графика для выбранного периода
+      function updatePeriodStatsAndChart() {
+        const period = currentPeriod;
+        const endDate = getTodayISO();
+        const startDate = getPeriodStart(period, new Date());
+        if (!startDate) return;
+
+        const filtered = filterByDateRange(startDate, endDate);
+        const aggregated = aggregateByExercise(filtered);
+        
+        // Текстовая статистика
+        if (aggregated.length === 0) {
+          periodStatsDiv.innerHTML = '📭 Нет данных за выбранный период';
+        } else {
+          let html = '<div style="width:100%">';
+          aggregated.forEach(([ex, total]) => {
+            html += `<div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span>🏅 ${ex}</span> <strong>${total}</strong></div>`;
+          });
+          html += '</div>';
+          const totalAll = aggregated.reduce((sum, [,t]) => sum + t, 0);
+          html += `<div style="margin-top:0.8rem; font-weight:700; border-top:1px solid #444; padding-top:0.5rem;">💪 Всего повторений: ${totalAll}</div>`;
+          periodStatsDiv.innerHTML = html;
+        }
+
+        // График
+        renderChart(aggregated);
+      }
+
+      function renderChart(aggregatedData) {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        if (chartInstance) {
+          chartInstance.destroy();
+        }
+        if (!aggregatedData || aggregatedData.length === 0) {
+          // Пустой график
+          chartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: [], datasets: [{ data: [], backgroundColor: '#feca57' }] },
+            options: { responsive: true, maintainAspectRatio: true }
+          });
+          return;
+        }
+
+        const labels = aggregatedData.map(([ex]) => ex);
+        const values = aggregatedData.map(([, total]) => total);
+        
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Повторения',
+              data: values,
+              backgroundColor: [
+                '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#54a0ff', '#5f27cd'
+              ],
+              borderRadius: 8,
+              borderWidth: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: '#3a3a3c' },
+                ticks: { color: '#ccc' }
+              },
+              x: {
+                ticks: { color: '#ccc' }
+              }
+            }
+          }
+        });
+      }
+
+      // Обработчик переключения периодов
+      function setPeriod(period, buttonElement) {
+        currentPeriod = period;
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        if (buttonElement) buttonElement.classList.add('active');
+        updatePeriodStatsAndChart();
+      }
+
+      // Инициализация событий
+      function bindEvents() {
+        addBtn.addEventListener('click', addRecord);
+        
+        todayBtn.addEventListener('click', () => {
+          setDateToToday();
+        });
+
+        dateInput.addEventListener('change', () => {
+          updateSelectedDateDisplay();
+          renderDailyList();
+        });
+
+        // Кнопки периодов
+        periodButtons.addEventListener('click', (e) => {
+          if (e.target.classList.contains('period-btn')) {
+            const period = e.target.getAttribute('data-period');
+            setPeriod(period, e.target);
+          }
+        });
+
+        // Enter в поле упражнения или повторений
+        exerciseInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') addRecord();
+        });
+        repsInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') addRecord();
+        });
+      }
+
+      // Первичная настройка
+      function init() {
+        loadFromStorage();
+        setDateToToday(); // установит сегодня и отрисует список
+        updateSuggestions();
+        // Активируем период "неделя" по умолчанию
+        const activeBtn = document.querySelector('.period-btn.active');
+        if (activeBtn) {
+          currentPeriod = activeBtn.getAttribute('data-period') || 'week';
+        }
+        updatePeriodStatsAndChart();
+        bindEvents();
+      }
+
+      // Запуск
+      init();
+    })();
+  </script>
+</body>
+</html>
